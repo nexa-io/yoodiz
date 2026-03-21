@@ -1327,23 +1327,25 @@ function buildMonthFilters() {
 
 // ── API ──────────────────────────────────────────────────────
 async function api(action, data = {}) {
-  const payload = {
-    action,
-    sessionToken: SESSION.token,
-    userEmail: SESSION.email,
-    ...data
-  };
-  try {
-    // Apps Script requires GET with payload param to avoid CORS preflight issues
-    const url = API_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload));
-    const res = await fetch(url, { method: 'GET' });
-    const json = await res.json();
-    return json;
-  } catch (e) {
-    return { success: false, error: 'Network error. Check your connection.' };
-  }
+  const payload = { action, sessionToken: SESSION.token, userEmail: SESSION.email, ...data };
+  return new Promise((resolve) => {
+    const cbName = 'cb_' + Date.now();
+    const script = document.createElement('script');
+    window[cbName] = (result) => {
+      resolve(result);
+      delete window[cbName];
+      script.remove();
+    };
+    script.onerror = () => {
+      resolve({ success: false, error: 'Network error. Check your connection.' });
+      delete window[cbName];
+      script.remove();
+    };
+    script.src = API_URL + '?callback=' + cbName + '&payload=' + encodeURIComponent(JSON.stringify(payload));
+    document.head.appendChild(script);
+  });
 }
-
+  
 // ── AUTH ─────────────────────────────────────────────────────
 async function handleLogin() {
   const email    = document.getElementById('loginEmail').value.trim();
