@@ -1401,17 +1401,34 @@ function showApp() {
   document.getElementById('userName').textContent = SESSION.name || SESSION.email;
   document.getElementById('userRole').textContent = SESSION.role;
   document.getElementById('userAvatar').textContent = (SESSION.name || 'U').charAt(0).toUpperCase();
-  document.getElementById('dashGreeting').textContent =
-    `Welcome back, ${SESSION.name || 'User'}!`;
+  document.getElementById('dashGreeting').textContent = `Welcome back, ${SESSION.name || 'User'}!`;
 
-  // Show/hide admin elements
+  // Show/hide admin elements based on role
+  const adminElements = document.querySelectorAll('.admin-only');
+  
   if (SESSION.role === 'admin') {
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+    adminElements.forEach(el => {
+      // Nav items should be flex, section labels block, others default
+      if (el.classList.contains('nav-item')) {
+        el.style.display = 'flex';
+      } else if (el.classList.contains('nav-section-label')) {
+        el.style.display = 'block';
+      } else if (el.tagName === 'TH') {
+        el.style.display = 'table-cell';
+      } else {
+        el.style.display = '';
+      }
+    });
+    console.log('✅ Admin mode enabled - Users menu should be visible');
+  } else {
+    adminElements.forEach(el => {
+      el.style.display = 'none';
+    });
   }
 
   navigate('dashboard');
 }
-
+  
 function showLogin() {
   document.getElementById('loginPage').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
