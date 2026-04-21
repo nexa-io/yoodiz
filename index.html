@@ -840,7 +840,7 @@ function showApp() {
   document.getElementById('userRl').textContent = S.role;
   document.getElementById('userAv').textContent = (S.name || 'U').charAt(0).toUpperCase();
 
-  if (S.role === 'admin') {
+  if ((S.role || '').toLowerCase() === 'admin') {
     document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
     nav('dashboard');
   } else {
