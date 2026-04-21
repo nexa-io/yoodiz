@@ -841,7 +841,7 @@ function showApp() {
   document.getElementById('userAv').textContent = (S.name || 'U').charAt(0).toUpperCase();
 
   if ((S.role || '').toLowerCase() === 'admin') {
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');  // ← Change here
     nav('dashboard');
   } else {
     document.querySelectorAll('.normal-only').forEach(el => el.style.display = '');
